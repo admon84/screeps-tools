@@ -1,0 +1,64 @@
+{
+  "name": "screeps-tools",
+  "version": "2.0.0",
+  "description": "Tools to help players of the Programming MMO Screeps",
+  "author": "admon84",
+  "license": "MIT",
+  "keywords": [
+    "screeps",
+    "typescript",
+    "react"
+  ],
+  "homepage": "https://github.com/admon84",
+  "bugs": "https://github.com/admon84/screeps-tools/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/admon84/screeps-tools.git"
+  },
+  "devDependencies": {
+    "@types/lz-string": "^1.5.0",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "@types/react-router-dom": "^5.3.3"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@types/node": "^16.18.29",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "lz-string": "^1.5.0",
+    "prettier": "^2.8.8",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.7.4",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.1",
+    "react-scripts": "5.0.1",
+    "sass": "^1.62.1",
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
