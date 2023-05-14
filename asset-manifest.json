@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/screeps-tools/static/css/main.5d89294c.css",
-    "main.js": "/screeps-tools/static/js/main.10b04bb5.js",
+    "main.js": "/screeps-tools/static/js/main.4e3f74b8.js",
     "index.html": "/screeps-tools/index.html",
     "main.5d89294c.css.map": "/screeps-tools/static/css/main.5d89294c.css.map",
-    "main.10b04bb5.js.map": "/screeps-tools/static/js/main.10b04bb5.js.map"
+    "main.4e3f74b8.js.map": "/screeps-tools/static/js/main.4e3f74b8.js.map"
   },
   "entrypoints": [
     "static/css/main.5d89294c.css",
-    "static/js/main.10b04bb5.js"
+    "static/js/main.4e3f74b8.js"
   ]
 }
