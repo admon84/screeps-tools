@@ -82,11 +82,11 @@ export class MapCell extends React.Component<MapCellProps> {
       case 'controller':
       case 'source':
         let path = process.env.PUBLIC_URL + `/img/structures/${this.state.structure}.png`;
-        content.push(<img key={this.state.structure} src={path} />);
+        content.push(<img key={this.state.structure} src={path} alt={this.state.structure} />);
     }
 
     if (this.state.source) {
-      content.push(<img key="source" src={process.env.PUBLIC_URL + '/img/resources/source.png'} />);
+      content.push(<img key="source" src={process.env.PUBLIC_URL + '/img/resources/source.png'} alt='source' />);
     }
 
     switch (this.state.mineral) {
@@ -98,7 +98,7 @@ export class MapCell extends React.Component<MapCellProps> {
       case 'O':
       case 'H':
         let path = process.env.PUBLIC_URL + `/img/resources/${this.state.mineral}.png`;
-        content.push(<img key="mineral" src={path} />);
+        content.push(<img key="mineral" src={path} alt='mineral' />);
     }
 
     if (this.state.road.middle) {

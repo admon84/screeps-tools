@@ -10,11 +10,6 @@ import Alert from 'react-bootstrap/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-type SelectOption = {
-  value: string;
-  label: string;
-};
-
 export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProps> {
   state: Readonly<{
     room: FieldValidation;
