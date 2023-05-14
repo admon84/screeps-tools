@@ -1,12 +1,12 @@
 import * as React from 'react';
-// import * as LZString from 'lz-string';
-import * as Constants from '../common/constants';
+import * as Constants from '../../utils/constants';
+import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPrint } from '@fortawesome/free-solid-svg-icons';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 export class ModalJson extends React.Component<ModalProps> {
   state: Readonly<{
@@ -62,11 +62,6 @@ export class ModalJson extends React.Component<ModalProps> {
     this.props.planner.loadJson(json);
   }
 
-  shareableLink() {
-    // let jsonString = JSON.stringify(this.createJson());
-    return '/building-planner/?share='; // + LZString.compressToEncodedURIComponent(jsonString);
-  }
-
   toggleModal() {
     this.setState({ modal: !this.state.modal });
   }
@@ -78,11 +73,16 @@ export class ModalJson extends React.Component<ModalProps> {
   render() {
     return (
       <>
-        <button className="btn btn-secondary" onClick={() => this.toggleModal()}>
-          <FontAwesomeIcon icon={faPrint} className="pe-1" /> Structures Json
-        </button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => this.toggleModal()}
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          <FontAwesomeIcon icon={faCopy} className="pe-1" /> Room JSON
+        </Button>
         <Modal size="lg" show={this.state.modal} onHide={() => this.toggleModal()} className="import-room">
-          <Modal.Header closeButton>Json Output</Modal.Header>
+          <Modal.Header closeButton>Room JSON</Modal.Header>
           <Modal.Body>
             <Row>
               <Col xs={12}>
@@ -95,19 +95,14 @@ export class ModalJson extends React.Component<ModalProps> {
               </Col>
             </Row>
             <Row>
-              <Col xs={6}>
-                <a href={this.shareableLink()} id="share-link">
-                  Share Link
-                </a>
-              </Col>
-              <Col xs={6}>
+              <Col>
                 <Form.Check
                   type="checkbox"
                   id="format-json"
                   name="format-json"
                   checked={this.state.format}
                   onChange={(e) => this.toggleFormatting(e)}
-                  label="Format Json"
+                  label="Pretty Format"
                 />
               </Col>
             </Row>

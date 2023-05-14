@@ -8,6 +8,11 @@ export const PLANNER = {
   WORLD: 'mmo',
 };
 
+export const WORLDS: { [key: string]: string } = {
+  mmo: 'MMO',
+  season: 'Season',
+};
+
 /**
  * Screeps Game Constants
  */

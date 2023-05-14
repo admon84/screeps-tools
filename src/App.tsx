@@ -18,7 +18,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="building-planner" element={<BuildingPlanner />} />
         <Route path="creep-designer" element={<CreepDesigner />} />
-        <Route path="*" element={<NoMatch />} />
+        <Route path="*" element={<Home />} />
       </Route>
     </Routes>
   );
@@ -29,7 +29,7 @@ function Layout() {
     <div className="screeps-tools">
       <Navbar className="header">
         <Navbar.Brand href="/">
-          <img src="/assets/logo.png" className="logo" alt="Screeps Tools" />
+          <img src={process.env.PUBLIC_URL + '/img/logo.png'} className="logo" alt="Screeps Tools" />
         </Navbar.Brand>
         <Nav className="me-auto">
           <Link to="/building-planner">Building Planner</Link>
@@ -54,33 +54,28 @@ function Home() {
         <Col sm={6}>
           <Card body style={cardStyles}>
             <Card.Title>Building Planner</Card.Title>
-            <Card.Text>Plan your next room layout with the Building Planner for Screeps.</Card.Text>
+            <Card.Text>
+              Introducing the Building Planner, a powerful utility that empowers you to craft the ultimate base layout
+              for any room in Screeps.
+            </Card.Text>
             <Link to="/building-planner">
-              <Button>Plan Room</Button>
+              <Button>View Building Planner</Button>
             </Link>
           </Card>
         </Col>
         <Col sm={6}>
           <Card body style={cardStyles}>
             <Card.Title>Creep Designer</Card.Title>
-            <Card.Text>Evaluate the potential of your creeps with the Creep Designer.</Card.Text>
+            <Card.Text>
+              Try the Creep Designer, a stat calculator used to create and customize creeps for any role in your Screeps
+              empire.
+            </Card.Text>
             <Link to="/creep-designer">
-              <Button>Design Creep</Button>
+              <Button>View Creep Designer</Button>
             </Link>
           </Card>
         </Col>
       </Row>
     </Container>
-  );
-}
-
-function NoMatch() {
-  return (
-    <div>
-      <h2>Nothing to see here!</h2>
-      <p>
-        <Link to="/">Go to the home page</Link>
-      </p>
-    </div>
   );
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
-// import * as LZString from 'lz-string';
-import * as Constants from '../common/constants';
+import * as Constants from '../../utils/constants';
+import * as Utils from '../../utils/utils';
 import { MapCell } from './map-cell';
 import { ModalJson } from './modal-json';
 import { ModalReset } from './modal-reset';
@@ -12,7 +12,6 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
-import { screepsWorlds } from '../common/utils';
 
 type BrushOption = {
   value: string;
@@ -49,16 +48,6 @@ export class BuildingPlanner extends React.Component {
 
   componentDidMount() {
     this.loadShards();
-
-    // let params = location.href.split('?')[1];
-    // let searchParams = new URLSearchParams(params);
-
-    // if (searchParams.get('share')) {
-    //     let json = LZString.decompressFromEncodedURIComponent(searchParams.get('share')!);
-    //     if (json) {
-    //         this.loadJson(JSON.parse(json));
-    //     }
-    // }
   }
 
   getInitialState() {
@@ -107,21 +96,17 @@ export class BuildingPlanner extends React.Component {
 
   loadShards() {
     const component = this;
-    for (const world in screepsWorlds) {
-      fetch(`/api/shards/${world}`).then((response) => {
-        response.json().then((data: any) => {
-          if (!data || Object.keys(data).length === 0) {
+    for (const world in Constants.WORLDS) {
+      fetch(Utils.getShardsUrl(world)).then((response) => {
+        response.json().then((data: { ok: boolean; shards: Array<{ name: string }> }) => {
+          if (!data || !data.ok) {
             return;
           }
-          const shards: string[] = [];
-          data.shards.forEach((shard: { name: string }) => {
-            shards.push(shard.name);
-          });
           component.setState({
             worlds: {
               ...this.state.worlds,
               [world]: {
-                shards: shards,
+                shards: data.shards.map(({ name }) => name),
               },
             },
           });
@@ -138,15 +123,18 @@ export class BuildingPlanner extends React.Component {
       if (json.world && json.world === 'season') {
         world = 'season';
       }
-      fetch(`/api/terrain/${world}/${json.shard}/${json.name}`).then((response) => {
-        response.json().then((data: any) => {
-          let terrain = data.terrain[0].terrain;
+      fetch(Utils.getRoomTerrainUrl(world, json.shard, json.name)).then((response) => {
+        response.json().then((data: { ok: boolean; terrain: Array<{ terrain: string }> }) => {
+          if (!data || !data.ok) {
+            return;
+          }
+          const { terrain } = data.terrain[0];
           let terrainMap: TerrainMap = {};
           for (var y = 0; y < 50; y++) {
             terrainMap[y] = {};
             for (var x = 0; x < 50; x++) {
               let code = terrain.charAt(y * 50 + x);
-              terrainMap[y][x] = code;
+              terrainMap[y][x] = parseInt(code);
             }
           }
 
@@ -397,7 +385,7 @@ export class BuildingPlanner extends React.Component {
     const structure = Constants.STRUCTURES[key];
     const placed = this.state.structures[key] ? this.state.structures[key].length : 0;
     const total = Constants.CONTROLLER_STRUCTURES[key][this.state.rcl];
-    const src = `/assets/structures/${key}.png`;
+    const src = process.env.PUBLIC_URL + `/img/structures/${key}.png`;
 
     return (
       <div className="structure-brush">
@@ -457,49 +445,53 @@ export class BuildingPlanner extends React.Component {
       <Container fluid className="building-planner">
         <Row>
           <Col xs={7} md={9} xl={10}>
-            <div className="map-wrapper">
-              <div className="map">
-                {[...Array(50)].map((_, y: number) => {
-                  return [...Array(50)].map((_, x: number) => (
-                    <MapCell
-                      x={x}
-                      y={y}
-                      planner={this}
-                      terrain={this.state.terrain[y][x]}
-                      structure={this.getStructure(x, y)}
-                      road={this.getRoadProps(x, y)}
-                      rampart={this.isRampart(x, y)}
-                      source={this.hasSource(x, y)}
-                      mineral={this.getMineral(x, y)}
-                      key={'mc-' + x + '-' + y}
-                    />
-                  ));
-                })}
-              </div>
-              <div className="map-overlay">
-                {this.state.settings.showStatsOverlay && this.state.hover && (
-                  <div className="stats-panel">
-                    <div>X: {this.state.x}</div>
-                    <div>Y: {this.state.y}</div>
-                  </div>
-                )}
-              </div>
+            <div className="map">
+              {[...Array(50)].map((_, y: number) => {
+                return [...Array(50)].map((_, x: number) => (
+                  <MapCell
+                    x={x}
+                    y={y}
+                    planner={this}
+                    terrain={this.state.terrain[y][x]}
+                    structure={this.getStructure(x, y)}
+                    road={this.getRoadProps(x, y)}
+                    rampart={this.isRampart(x, y)}
+                    source={this.hasSource(x, y)}
+                    mineral={this.getMineral(x, y)}
+                    key={'mc-' + x + '-' + y}
+                  />
+                ));
+              })}
             </div>
           </Col>
           <Col xs={5} md={3} xl={2} className="controls">
             <Stack gap={2}>
-              <div className="group-rcl">
-                <Form.Select
-                  value={this.state.rcl}
-                  onChange={(e) => this.setRCL(parseInt(e.target.value))}
-                  className="select-rcl"
-                  size="sm"
-                >
-                  {this.getRCLOptions().map(({ value, label }) => (
-                    <option value={value}>{label}</option>
-                  ))}
-                </Form.Select>
-              </div>
+              <Row>
+                <Col xs={6}>
+                  {this.state.settings.showStatsOverlay && this.state.hover && (
+                    <div className="pt-1">
+                      <Form.Text>
+                        X: {this.state.x}, Y: {this.state.y}
+                      </Form.Text>
+                    </div>
+                  )}
+                </Col>
+                <Col xs={6}>
+                  <Form.Select
+                    value={this.state.rcl}
+                    onChange={(e) => this.setRCL(parseInt(e.target.value))}
+                    className="select-rcl"
+                    size="sm"
+                  >
+                    {this.getRCLOptions().map(({ value, label }) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Col>
+              </Row>
+
               <Stack gap={1}>
                 {this.getStructureBrushes().map(({ value, label }) => (
                   <Button

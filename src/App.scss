@@ -4,16 +4,6 @@ body {
   padding: 0;
 }
 
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
-}
-
-.hidden {
-  display: none;
-}
-
 a {
   color: #5973ff !important;
 }
@@ -43,8 +33,9 @@ input.form-control {
   padding: 0;
 }
 
-select.form-control {
-  padding: 0 0 0 5px;
+select.form-select {
+  padding-right: 0.5rem;
+  background-position: right 5px center;
 }
 
 div.invalid-feedback {
@@ -97,7 +88,6 @@ input[type='number']::-webkit-outer-spin-button {
   background-image: linear-gradient(to bottom, #1f1f1f 0%, #1a1a1a 100%);
   border-bottom: 1px solid #111 !important;
   color: #fff;
-  overflow: hidden;
 
   img.logo {
     width: 163px;
@@ -219,20 +209,24 @@ input[type='number']::-webkit-outer-spin-button {
         display: inline-block;
         height: 28px;
         width: 36px;
-        text-align: center;
         color: #010101;
         border: 1px solid #666;
         margin: 0 1px;
         z-index: 20;
       }
 
-      select {
-        width: 84px;
-        height: 28px;
-        padding-left: 5px;
+      input {
+        text-align: center;
+      }
 
+      select {
+        padding-top: 0;
+        padding-bottom: 0;
         &.controller {
-          width: 55px;
+          width: 45px;
+        }
+        &.boost {
+          width: 84px;
         }
       }
 
@@ -341,17 +335,8 @@ input[type='number']::-webkit-outer-spin-button {
     color: #ccc;
     padding-top: 10px;
     padding-bottom: 10px;
-    min-height: 100vh;
+    min-height: calc(100vh - 40px);
     z-index: 1;
-
-    .group-rcl {
-      display: flex;
-      justify-content: end;
-
-      .select-rcl {
-        width: 110px;
-      }
-    }
 
     .structure-brush {
       display: flex;
@@ -379,36 +364,15 @@ input[type='number']::-webkit-outer-spin-button {
     }
   }
 
-  .map-wrapper {
-    display: flex;
-
-    .map-overlay {
-      padding: 7px 10px;
-      width: 48px;
-      margin-right: auto;
-
-      .stats-panel {
-        position: sticky;
-        top: 0;
-        background: rgba(16, 16, 16, 0.3);
-        color: #ccc;
-        font-size: 12px;
-      }
-    }
-  }
-
   .map {
     position: relative;
     flex: 1;
     display: grid;
-    grid-gap: 0px;
+    gap: 0px;
     grid-template-columns: repeat(50, minmax(2%, 1fr));
-    grid-template-rows: repeat(50, minmax(2%, 1fr));
     width: auto;
-    max-width: calc(100vh - 70px);
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: auto;
+    max-width: calc(100vh - 75px);
+    margin: 10px auto;
     box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14),
       0px 9px 46px 8px rgba(0, 0, 0, 0.12);
     background: rgb(48, 48, 48);
@@ -416,7 +380,6 @@ input[type='number']::-webkit-outer-spin-button {
 
     .tile {
       position: relative;
-      aspect-ratio: 1;
 
       &::before {
         content: '';
@@ -435,18 +398,22 @@ input[type='number']::-webkit-outer-spin-button {
         margin: inherit;
         box-shadow: inset 0 0 0 1px rgba(38, 38, 38, 0.2);
 
-        img,
         svg {
           position: absolute;
-          top: 0px;
-          left: 0px;
-          height: 16px;
-          width: 16px;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
         }
 
         img {
+          position: absolute;
+          top: 0;
+          left: 0;
           z-index: 3;
           user-select: none;
+          max-width: 100%;
+          height: auto;
         }
 
         svg {
@@ -543,56 +510,4 @@ form.load-room {
   100% {
     text-shadow: 0.25em 0 0 #495057, 0.5em 0 0 #495057;
   }
-}
-
-kbd,
-.key {
-  display: inline;
-  display: inline-block;
-  min-width: 1em;
-  padding: 0.2em 0.3em;
-  font: normal 0.85em/1 'Lucida Grande', Lucida, Arial, sans-serif;
-  text-align: center;
-  text-decoration: none;
-  -moz-border-radius: 0.3em;
-  -webkit-border-radius: 0.3em;
-  border-radius: 0.3em;
-  border: none;
-  cursor: default;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-kbd[title],
-.key[title] {
-  cursor: help;
-}
-
-kbd,
-kbd.light,
-.light-keys kbd,
-.key.light,
-.light-keys .key {
-  background: rgb(250, 250, 250);
-  background: -moz-linear-gradient(top, rgb(210, 210, 210), rgb(255, 255, 255));
-  background: -webkit-gradient(linear, left top, left bottom, from(rgb(210, 210, 210)), to(rgb(255, 255, 255)));
-  color: rgb(50, 50, 50);
-  text-shadow: 0 0 2px rgb(255, 255, 255);
-  box-shadow: inset 0 0 1px rgb(255, 255, 255), inset 0 0 0.4em rgb(200, 200, 200), 0 0.1em 0 rgb(130, 130, 130),
-    0 0.11em 0 rgba(0, 0, 0, 0.4), 0 0.1em 0.11em rgba(0, 0, 0, 0.9);
-}
-
-kbd.dark,
-.dark-keys kbd,
-.key,
-.key.dark,
-.dark-keys .key {
-  background: rgb(80, 80, 80);
-  background: -moz-linear-gradient(top, rgb(60, 60, 60), rgb(80, 80, 80));
-  background: -webkit-gradient(linear, left top, left bottom, from(rgb(60, 60, 60)), to(rgb(80, 80, 80)));
-  color: rgb(250, 250, 250);
-  text-shadow: -1px -1px 0 rgb(70, 70, 70);
-  box-shadow: inset 0 0 1px rgb(150, 150, 150), inset 0 -0.05em 0.4em rgb(80, 80, 80), 0 0.1em 0 rgb(30, 30, 30),
-    0 0.1em 0.1em rgba(0, 0, 0, 0.3);
 }

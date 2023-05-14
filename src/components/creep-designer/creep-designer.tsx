@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as Constants from '../common/constants';
+import * as Constants from '../../utils/constants';
+import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -75,23 +76,6 @@ export class CreepDesigner extends React.Component {
         extension: 60,
       },
     };
-
-    // if (!props.api) {
-    //     let params = location.href.split('?')[1];
-    //     let searchParams = new URLSearchParams(params);
-
-    //     if (searchParams.get('share')) {
-    //         let body = searchParams.get('share')!;
-    //         let creepBody = this.state.body;
-    //         let i = 0;
-    //         body.split('-').forEach(count => {
-    //             creepBody[Object.keys(Constants.BODYPARTS)[i]] = parseInt(count);
-    //             i += 1;
-    //         });
-
-    //         this.setState({body: creepBody});
-    //     }
-    // }
   }
 
   setBodyPart(e: any, part: string) {
@@ -211,16 +195,6 @@ export class CreepDesigner extends React.Component {
     return '[' + body.slice(0, -1) + ']';
   }
 
-  shareLink() {
-    let counts: number[] = [];
-
-    Object.keys(Constants.BODYPARTS).forEach((part) => {
-      counts.push(this.state.body[part]);
-    });
-
-    return '/creep-designer/?share=' + counts.join('-');
-  }
-
   creepLifespan() {
     if (this.state.body.claim > 0) {
       return Constants.CREEP_CLAIM_LIFE_TIME;
@@ -269,9 +243,17 @@ export class CreepDesigner extends React.Component {
   boostOptions(part: string) {
     let options: React.ReactNode[] = [];
     if (Constants.BOOSTS[part] !== undefined) {
-      options.push(<option value="">-</option>);
+      options.push(
+        <option key="default" value="">
+          -
+        </option>
+      );
       for (let resource of Object.keys(Constants.BOOSTS[part])) {
-        options.push(<option value={resource}>{resource}</option>);
+        options.push(
+          <option key={resource} value={resource}>
+            {resource}
+          </option>
+        );
       }
     }
     return options;
@@ -419,9 +401,9 @@ export class CreepDesigner extends React.Component {
   }
 
   getEnergyCapacity(type: string) {
-    if (type == 'spawn') {
+    if (type === 'spawn') {
       return Constants.SPAWN_ENERGY_CAPACITY;
-    } else if (type == 'extension') {
+    } else if (type === 'extension') {
       return Constants.EXTENSION_ENERGY_CAPACITY[this.state.controller];
     }
     return 0;
@@ -593,10 +575,10 @@ export class CreepDesigner extends React.Component {
       tickLabel = val.toLocaleString() + ' ticks';
     }
     let tileLabel = 'on ' + type + ' tiles';
-    if (type == 'road') {
+    if (type === 'road') {
       tileLabel = 'on ' + type + 's';
     }
-    if (type == 'swamp') {
+    if (type === 'swamp') {
       tileLabel = 'in ' + type + 's';
     }
     let title = `move every ${tickLabel} ${tileLabel}`;
@@ -665,26 +647,23 @@ export class CreepDesigner extends React.Component {
                         <td className="part">{Constants.BODYPART_NAMES[part]}</td>
                         <td className="price">{Constants.BODYPART_COST[part]}</td>
                         <td>
-                          <button
-                            className="btn btn-secondary btn-sm"
+                          <Button
+                            size="sm"
+                            variant="secondary"
                             tabIndex={-1}
                             onClick={() => this.removeBodyPart(part, 1)}
                           >
                             <FontAwesomeIcon icon={faMinus} />
-                          </button>
+                          </Button>
                           <Form.Control
                             type="number"
                             className="count"
                             value={this.state.body[part] ? this.state.body[part] : ''}
                             onChange={(e) => this.setBodyPart(e, part)}
                           />
-                          <button
-                            className="btn btn-secondary btn-sm"
-                            tabIndex={-1}
-                            onClick={() => this.addBodyPart(part, 1)}
-                          >
+                          <Button size="sm" variant="secondary" tabIndex={-1} onClick={() => this.addBodyPart(part, 1)}>
                             <FontAwesomeIcon icon={faPlus} />
-                          </button>
+                          </Button>
                         </td>
                         <td className="text-center">
                           {Constants.BOOSTS[part] !== undefined && (
@@ -733,13 +712,14 @@ export class CreepDesigner extends React.Component {
                         <td className="part">{this.capitalize(type)}</td>
                         <td className="price">{this.getEnergyCapacity(type)}</td>
                         <td>
-                          <button
-                            className="btn btn-secondary btn-sm"
+                          <Button
+                            variant="secondary"
+                            size="sm"
                             tabIndex={-1}
                             onClick={() => this.removeStructure(type, 1)}
                           >
                             <FontAwesomeIcon icon={faMinus} />
-                          </button>
+                          </Button>
                           <Form.Control
                             type="number"
                             className="count"
@@ -747,13 +727,14 @@ export class CreepDesigner extends React.Component {
                             onChange={(e) => this.setStructure(e, type)}
                           />
                           {type !== 'spawn' && (
-                            <button
-                              className="btn btn-secondary btn-sm"
+                            <Button
+                              variant="secondary"
+                              size="sm"
                               tabIndex={-1}
                               onClick={() => this.addStructure(type, 1)}
                             >
                               <FontAwesomeIcon icon={faPlus} />
-                            </button>
+                            </Button>
                           )}
                         </td>
                         <td></td>
@@ -774,7 +755,11 @@ export class CreepDesigner extends React.Component {
                         onChange={(e) => this.changeControllerLevel(e)}
                       >
                         {[...Array(9).keys()].map((level) => {
-                          return <option value={level}>{level}</option>;
+                          return (
+                            <option key={level} value={level}>
+                              {level}
+                            </option>
+                          );
                         })}
                       </Form.Select>
                     </td>
@@ -822,12 +807,6 @@ export class CreepDesigner extends React.Component {
                         onChange={(e) => this.import(e)}
                         value={this.body()}
                       />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td colSpan={4}>
-                      <a href={this.shareLink()}>Share Link</a>
                     </td>
                   </tr>
                 </tbody>

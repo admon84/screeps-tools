@@ -1,10 +1,11 @@
 import * as React from 'react';
-import * as Constants from '../common/constants';
-import { screepsWorlds } from '../common/utils';
+import * as Constants from '../../utils/constants';
+import * as Utils from '../../utils/utils';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +22,8 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
     shard: FieldValidation;
     showStructures: boolean;
     submitCalled: boolean;
+    validForm: boolean;
+    formError: string;
     modal: boolean;
   }>;
 
@@ -44,6 +47,8 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
       },
       showStructures: true,
       submitCalled: false,
+      validForm: true,
+      formError: '',
       modal: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -117,7 +122,6 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
 
   handleSubmit(e: any) {
     e.preventDefault();
-    this.toggleModal();
 
     const parent = this.props.planner;
     const room = this.state.room.value;
@@ -157,15 +161,27 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
       }
     }
 
-    fetch(`/api/terrain/${world}/${shard}/${room}`).then((response) => {
-      response.json().then((data: any) => {
-        let terrain = data.terrain[0].terrain;
+    fetch(Utils.getRoomTerrainUrl(world, shard, room)).then((response) => {
+      if (!response.ok) {
+        this.setState({ validForm: false, formError: 'Screeps Room Terrain API failed.' });
+        return;
+      }
+      response.json().then((data: { ok: boolean; terrain: Array<{ terrain: string }>; error?: string }) => {
+        if (!data || !data.ok) {
+          this.setState({ validForm: false, formError: 'Bad data received from Screeps Room Terrain API.' });
+          return;
+        }
+        if (data.error) {
+          this.setState({ validForm: false, formError: data.error });
+          return;
+        }
+        let { terrain } = data.terrain[0];
         let terrainMap: TerrainMap = {};
         for (var y = 0; y < 50; y++) {
           terrainMap[y] = {};
           for (var x = 0; x < 50; x++) {
             let code = terrain.charAt(y * 50 + x);
-            terrainMap[y][x] = code;
+            terrainMap[y][x] = parseInt(code);
           }
         }
         parent.setState({
@@ -177,45 +193,67 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
       });
     });
 
-    fetch(`/api/objects/${world}/${shard}/${room}`).then((response) => {
-      response.json().then((data: any) => {
-        let sources: { x: number; y: number }[] = [];
-        let mineral: { [mineralType: string]: { x: number; y: number } } = {};
-        let structures: { [structure: string]: { x: number; y: number }[] } = {};
-
-        let keepStructures = ['controller'];
-        if (includeStructs) {
-          keepStructures.push(...Object.keys(Constants.CONTROLLER_STRUCTURES));
-        }
-        for (let o of data.objects) {
-          if (o.type == 'source') {
-            sources.push({
-              x: o.x,
-              y: o.y,
-            });
-          } else if (o.type == 'mineral') {
-            mineral[o.mineralType] = {
-              x: o.x,
-              y: o.y,
-            };
-          } else {
-            if (keepStructures.indexOf(o.type) > -1) {
-              if (!structures[o.type]) {
-                structures[o.type] = [];
-              }
-              structures[o.type].push({
-                x: o.x,
-                y: o.y,
-              });
+    fetch(Utils.getRoomObjectsUrl(world, shard, room)).then((response) => {
+      if (!response.ok) {
+        this.setState({ validForm: false, formError: 'Screeps Room Objects API failed.' });
+        return;
+      }
+      response
+        .json()
+        .then(
+          (data: {
+            ok: boolean;
+            objects: Array<{ type: string; x: number; y: number; mineralType?: string }>;
+            error?: string;
+          }) => {
+            if (!data || !data.ok) {
+              this.setState({ validForm: false, formError: 'Bad data received from Screeps Room Objects API.' });
+              return;
             }
+            if (data.error) {
+              this.setState({ validForm: false, formError: data.error });
+              return;
+            }
+
+            let sources: { x: number; y: number }[] = [];
+            let mineral: { [mineralType: string]: { x: number; y: number } } = {};
+            let structures: { [structure: string]: { x: number; y: number }[] } = {};
+
+            let keepStructures = ['controller'];
+            if (includeStructs) {
+              keepStructures.push(...Object.keys(Constants.CONTROLLER_STRUCTURES));
+            }
+            for (let o of data.objects) {
+              if (o.type === 'source') {
+                sources.push({
+                  x: o.x,
+                  y: o.y,
+                });
+              } else if (o.type === 'mineral') {
+                mineral[o.mineralType!] = {
+                  x: o.x,
+                  y: o.y,
+                };
+              } else {
+                if (keepStructures.indexOf(o.type) > -1) {
+                  if (!structures[o.type]) {
+                    structures[o.type] = [];
+                  }
+                  structures[o.type].push({
+                    x: o.x,
+                    y: o.y,
+                  });
+                }
+              }
+            }
+            parent.setState({
+              structures: structures,
+              sources: sources,
+              mineral: mineral,
+            });
+            this.toggleModal();
           }
-        }
-        parent.setState({
-          structures: structures,
-          sources: sources,
-          mineral: mineral,
-        });
-      });
+        );
     });
   }
 
@@ -224,24 +262,17 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
     if (!world) {
       return null;
     }
-    const selected = {
+    return {
       value: world,
-      label: screepsWorlds[world],
+      label: Constants.WORLDS[world],
     };
-    return selected;
   }
 
   getWorldOptions() {
-    const options: Array<SelectOption> = [];
-
-    Object.keys(this.props.worlds).map((world) => {
-      let props = {
-        value: world,
-        label: screepsWorlds[world],
-      };
-      options.push(props);
-    });
-    return options;
+    return Object.keys(this.props.worlds).map((world) => ({
+      value: world,
+      label: Constants.WORLDS[world],
+    }));
   }
 
   getSelectedShard() {
@@ -249,11 +280,10 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
     if (!shard) {
       return null;
     }
-    const selected: SelectOption = {
+    return {
       value: shard,
       label: shard,
     };
-    return selected;
   }
 
   getShardOptions() {
@@ -261,16 +291,10 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
     if (!world) {
       return [];
     }
-    const options: SelectOption[] = [];
-
-    world.shards.map((shard) => {
-      let props: SelectOption = {
-        value: shard,
-        label: shard,
-      };
-      options.push(props);
-    });
-    return options;
+    return world.shards.map((shard) => ({
+      value: shard,
+      label: shard,
+    }));
   }
 
   toggleModal() {
@@ -280,97 +304,111 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
   render() {
     return (
       <>
-        <button className="btn btn-secondary" onClick={() => this.toggleModal()}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => this.toggleModal()}
+          onMouseDown={(e) => e.preventDefault()}
+        >
           <FontAwesomeIcon icon={faDownload} className="pe-1" /> Import Room
-        </button>
+        </Button>
         <Modal show={this.state.modal} onHide={() => this.toggleModal()} className="import-room">
           <Modal.Header closeButton>Import Room</Modal.Header>
           <Modal.Body>
             <form id="load-room" className="load-room" onSubmit={this.handleSubmit}>
               <Row>
                 <Col xs={6}>
-                  <Form.Label for="worldName">World</Form.Label>
-                  {Object.keys(this.props.worlds).length === 0 && <div className="loading">Loading</div>}
-                  {Object.keys(this.props.worlds).length > 0 && (
-                    <Form.Select
-                      value={this.props.world}
-                      onChange={(e) => this.handleTextChange('world', e.target.value, this.validateWorld)}
-                      className="select-world"
-                    >
-                      {this.getWorldOptions().map(({ value, label }) => (
-                        <option value={value}>{label}</option>
-                      ))}
-                    </Form.Select>
-                  )}
-                  {!this.state.world.valid && (
-                    <Alert variant="danger" className="p-1">
-                      Invalid world selection
-                    </Alert>
-                  )}
+                  <Form.Group className="mb-2">
+                    <Form.Label for="worldName">World</Form.Label>
+                    {Object.keys(this.props.worlds).length === 0 && <div className="loading">Loading</div>}
+                    {Object.keys(this.props.worlds).length > 0 && (
+                      <Form.Select
+                        value={this.props.world}
+                        onChange={(e) => this.handleTextChange('world', e.target.value, this.validateWorld)}
+                        className="select-world"
+                      >
+                        {this.getWorldOptions().map(({ value, label }) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    )}
+                    {!this.state.world.valid && (
+                      <Alert variant="danger" className="py-1 px-2">
+                        Invalid world selection
+                      </Alert>
+                    )}
+                  </Form.Group>
                 </Col>
                 <Col xs={6}>
-                  <Form.Label for="shardName">Shard</Form.Label>
-                  {!this.state.world.valid && <div className="loading">Loading</div>}
-                  {this.state.world.valid && (
-                    <Form.Select
-                      value={this.props.shard}
-                      onChange={(e) => this.handleTextChange('shard', e.target.value, this.validateShard)}
-                      className="select-shard"
-                    >
-                      {this.getShardOptions().map(({ value, label }) => (
-                        <option value={value}>{label}</option>
-                      ))}
-                    </Form.Select>
-                  )}
-                  {!this.state.shard.valid && (
-                    <Alert variant="danger" className="p-1">
-                      Invalid shard selection
-                    </Alert>
-                  )}
+                  <Form.Group className="mb-2">
+                    <Form.Label for="shardName">Shard</Form.Label>
+                    {!this.state.world.valid && <div className="loading">Loading</div>}
+                    {this.state.world.valid && (
+                      <Form.Select
+                        value={this.props.shard}
+                        onChange={(e) => this.handleTextChange('shard', e.target.value, this.validateShard)}
+                        className="select-shard"
+                      >
+                        {this.getShardOptions().map(({ value, label }) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    )}
+                    {!this.state.shard.valid && (
+                      <Alert variant="danger" className="py-1 px-2">
+                        Invalid shard selection
+                      </Alert>
+                    )}
+                  </Form.Group>
                 </Col>
               </Row>
               <Row>
                 <Col xs={6}>
-                  <Form.Label for="roomName">Room</Form.Label>
-                  <Form.Control
-                    id="roomName"
-                    name="room"
-                    value={this.state.room.value}
-                    onBlur={(e) => this.handleTextBlur(e, this.validateRoom)}
-                    onChange={(e) => this.handleTextChange('room', e.target.value, this.validateRoom)}
-                  />
-                  {!this.state.room.valid && (
-                    <Alert variant="danger" className="p-1">
-                      Invalid room name
-                    </Alert>
-                  )}
+                  <Form.Group>
+                    <Form.Label for="roomName">Room name</Form.Label>
+                    <Form.Control
+                      id="roomName"
+                      name="room"
+                      value={this.state.room.value}
+                      onBlur={(e) => this.handleTextBlur(e, this.validateRoom)}
+                      onChange={(e) => this.handleTextChange('room', e.target.value, this.validateRoom)}
+                    />
+                    {!this.state.room.valid && (
+                      <Alert variant="danger" className="py-1 px-2">
+                        Invalid room name
+                      </Alert>
+                    )}
+                  </Form.Group>
                 </Col>
                 <Col xs={6}>
-                  <Form.Check
-                    type="checkbox"
-                    id="showStructures"
-                    name="showStructures"
-                    checked={this.state.showStructures}
-                    onChange={(e) => this.handleCheckboxChange(e)}
-                    label="Include Structures"
-                    className="mt-4"
-                  />
+                  <Form.Group>
+                    <Form.Check
+                      type="checkbox"
+                      id="showStructures"
+                      name="showStructures"
+                      checked={this.state.showStructures}
+                      onChange={(e) => this.handleCheckboxChange(e)}
+                      label="Include Structures"
+                      className="mt-4"
+                    />
+                  </Form.Group>
                 </Col>
-              </Row>
-              <Row>
-                <Col></Col>
               </Row>
             </form>
           </Modal.Body>
-          <Modal.Footer>
-            <button
-              type="submit"
-              form="load-room"
-              className="btn btn-primary"
-              onMouseDown={() => this.setState({ submitCalled: true })}
-            >
+          <Modal.Footer className="d-flex">
+            {!this.state.validForm && this.state.formError && (
+              <Alert variant="danger" className="py-1 px-2">
+                {this.state.formError}
+              </Alert>
+            )}
+            <Button type="submit" form="load-room" onMouseDown={() => this.setState({ submitCalled: true })}>
               Import Room
-            </button>
+            </Button>
           </Modal.Footer>
         </Modal>
       </>
