@@ -43,14 +43,22 @@ export class MapCell extends React.Component<MapCellProps> {
     };
   }
 
-  componentWillReceiveProps(newProps: MapCellProps) {
-    this.setState({
-      structure: newProps.structure,
-      road: newProps.road,
-      rampart: newProps.rampart,
-      source: newProps.source,
-      mineral: newProps.mineral,
-    });
+  componentDidUpdate(prevProps: MapCellProps) {
+    if (this.props.structure !== prevProps.structure) {
+      this.setState({ structure: this.props.structure });
+    }
+    if (this.props.road !== prevProps.road) {
+      this.setState({ road: this.props.road });
+    }
+    if (this.props.rampart !== prevProps.rampart) {
+      this.setState({ rampart: this.props.rampart });
+    }
+    if (this.props.source !== prevProps.source) {
+      this.setState({ source: this.props.source });
+    }
+    if (this.props.mineral !== prevProps.mineral) {
+      this.setState({ mineral: this.props.mineral });
+    }
   }
 
   getCellContent() {
@@ -74,11 +82,11 @@ export class MapCell extends React.Component<MapCellProps> {
       case 'controller':
       case 'source':
         let path = process.env.PUBLIC_URL + `/img/structures/${this.state.structure}.png`;
-        content.push(<img src={path} />);
+        content.push(<img key={this.state.structure} src={path} />);
     }
 
     if (this.state.source) {
-      content.push(<img src={process.env.PUBLIC_URL + '/img/resources/source.png'} />);
+      content.push(<img key="source" src={process.env.PUBLIC_URL + '/img/resources/source.png'} />);
     }
 
     switch (this.state.mineral) {
@@ -90,68 +98,68 @@ export class MapCell extends React.Component<MapCellProps> {
       case 'O':
       case 'H':
         let path = process.env.PUBLIC_URL + `/img/resources/${this.state.mineral}.png`;
-        content.push(<img src={path} />);
+        content.push(<img key="mineral" src={path} />);
     }
 
     if (this.state.road.middle) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-middle" height="2%" width="100%">
           <circle cx="50%" cy="50%" r="1" fill="#6b6b6b" />
         </svg>
       );
     }
     if (this.state.road.top_left) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-top-left" height="2%" width="100%">
           <line x1="0" y1="0" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );
     }
     if (this.state.road.top) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-top" height="2%" width="100%">
           <line x1="50%" y1="0" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );
     }
     if (this.state.road.top_right) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-top-right" height="2%" width="100%">
           <line x1="100%" y1="0" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );
     }
     if (this.state.road.right) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-right" height="2%" width="100%">
           <line x1="100%" y1="50%" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );
     }
     if (this.state.road.bottom_right) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-bottom-right" height="2%" width="100%">
           <line x1="100%" y1="100%" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );
     }
     if (this.state.road.bottom) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-bottom" height="2%" width="100%">
           <line x1="50%" y1="100%" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );
     }
     if (this.state.road.bottom_left) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-bottom-left" height="2%" width="100%">
           <line x1="0" y1="100%" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );
     }
     if (this.state.road.left) {
       content.push(
-        <svg height="2%" width="100%">
+        <svg key="road-left" height="2%" width="100%">
           <line x1="0" y1="50%" x2="50%" y2="50%" stroke="#6b6b6b" strokeWidth={2} />
         </svg>
       );

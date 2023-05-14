@@ -495,6 +495,7 @@ export class BuildingPlanner extends React.Component {
               <Stack gap={1}>
                 {this.getStructureBrushes().map(({ value, label }) => (
                   <Button
+                    key={value}
                     variant={this.state.brush === value ? 'primary' : 'secondary'}
                     onClick={() => this.setBrush(value)}
                     size="sm"

@@ -626,7 +626,7 @@ export class CreepDesigner extends React.Component {
 
   render() {
     return (
-      <Container className="creep-designer" fluid={true}>
+      <Container className="creep-designer" fluid>
         <Row>
           <Col>
             <div className="panel">
@@ -678,7 +678,7 @@ export class CreepDesigner extends React.Component {
                   })}
                   <tr>
                     <td>
-                      <label htmlFor="input-units">Unit Count:</label>
+                      <Form.Label htmlFor="input-units">Unit Count:</Form.Label>
                     </td>
                     <td>
                       <Form.Control
@@ -744,7 +744,7 @@ export class CreepDesigner extends React.Component {
                   })}
                   <tr>
                     <td>
-                      <label htmlFor="select-rcl">Controller Level:</label>
+                      <Form.Label htmlFor="select-rcl">Controller Level:</Form.Label>
                     </td>
                     <td>
                       <Form.Select
@@ -776,7 +776,7 @@ export class CreepDesigner extends React.Component {
                   </tr>
                   <tr>
                     <td>
-                      <label htmlFor="input-ticks">Tick Duration:</label>
+                      <Form.Label htmlFor="input-ticks">Tick Duration:</Form.Label>
                     </td>
                     <td colSpan={4}>
                       <Form.Control
@@ -797,7 +797,7 @@ export class CreepDesigner extends React.Component {
                   </tr>
                   <tr>
                     <td>
-                      <label htmlFor="creep-body">Body Profile</label>
+                      <Form.Label htmlFor="creep-body">Body Profile</Form.Label>
                     </td>
                     <td colSpan={4}>
                       <Form.Control
@@ -1307,7 +1307,7 @@ export class CreepDesigner extends React.Component {
                         this.state.body[part] > 0
                       ) {
                         return (
-                          <tr className="dark">
+                          <tr key={part} className="dark">
                             <td>{this.state.boost[part]}</td>
                             {this.state.unitCount <= 1 && (
                               <td colSpan={2} className="text-center">
@@ -1360,7 +1360,7 @@ export class CreepDesigner extends React.Component {
                 <div className="actions-list">
                   {this.getCreepActions().map((action) => {
                     return (
-                      <ul className="creep-action">
+                      <ul key={action} className="creep-action">
                         <li>{action}</li>
                       </ul>
                     );

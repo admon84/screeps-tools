@@ -319,10 +319,11 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
               <Row>
                 <Col xs={6}>
                   <Form.Group className="mb-2">
-                    <Form.Label for="worldName">World</Form.Label>
+                    <Form.Label htmlFor="worldName">World</Form.Label>
                     {Object.keys(this.props.worlds).length === 0 && <div className="loading">Loading</div>}
                     {Object.keys(this.props.worlds).length > 0 && (
                       <Form.Select
+                        id="worldName"
                         value={this.props.world}
                         onChange={(e) => this.handleTextChange('world', e.target.value, this.validateWorld)}
                         className="select-world"
@@ -343,10 +344,11 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
                 </Col>
                 <Col xs={6}>
                   <Form.Group className="mb-2">
-                    <Form.Label for="shardName">Shard</Form.Label>
+                    <Form.Label htmlFor="shardName">Shard</Form.Label>
                     {!this.state.world.valid && <div className="loading">Loading</div>}
                     {this.state.world.valid && (
                       <Form.Select
+                        id="shardName"
                         value={this.props.shard}
                         onChange={(e) => this.handleTextChange('shard', e.target.value, this.validateShard)}
                         className="select-shard"
@@ -369,7 +371,7 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
               <Row>
                 <Col xs={6}>
                   <Form.Group>
-                    <Form.Label for="roomName">Room name</Form.Label>
+                    <Form.Label htmlFor="roomName">Room name</Form.Label>
                     <Form.Control
                       id="roomName"
                       name="room"
