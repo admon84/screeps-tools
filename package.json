@@ -9,7 +9,7 @@
     "typescript",
     "react"
   ],
-  "homepage": "https://github.com/admon84/screeps-tools",
+  "homepage": "https://admon84.github.io/screeps-tools",
   "bugs": "https://github.com/admon84/screeps-tools/issues",
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "gh-pages": "^5.0.0",
     "prettier": "^2.8.8",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
@@ -35,7 +36,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
