@@ -28,8 +28,10 @@ function Layout() {
   return (
     <div className="screeps-tools">
       <Navbar className="header">
-        <Navbar.Brand href="/">
-          <img src={process.env.PUBLIC_URL + '/img/logo.png'} className="logo" alt="Screeps Tools" />
+        <Navbar.Brand>
+          <Link to="/">
+            <img src={process.env.PUBLIC_URL + '/img/logo.png'} className="logo" alt="Screeps Tools" />
+          </Link>
         </Navbar.Brand>
         <Nav className="me-auto">
           <Link to="/building-planner">Building Planner</Link>
