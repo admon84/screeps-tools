@@ -156,12 +156,9 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
       }
     }
 
-    fetch(Utils.getRoomTerrainUrl(world, shard, room)).then((response) => {
-      if (!response.ok) {
-        this.setState({ validForm: false, formError: 'Screeps Room Terrain API failed.' });
-        return;
-      }
-      response.json().then((data: { ok: boolean; terrain: Array<{ terrain: string }>; error?: string }) => {
+    fetch(Utils.getRoomTerrainUrl(world, shard, room))
+      .then((response) => response.json())
+      .then((data: { ok: boolean; terrain: Array<{ terrain: string }>; error?: string }) => {
         if (!data || !data.ok) {
           this.setState({ validForm: false, formError: 'Bad data received from Screeps Room Terrain API.' });
           return;
@@ -185,71 +182,71 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
           world: world,
           shard: shard,
         });
-      });
-    });
-
-    fetch(Utils.getRoomObjectsUrl(world, shard, room)).then((response) => {
-      if (!response.ok) {
-        this.setState({ validForm: false, formError: 'Screeps Room Objects API failed.' });
+      })
+      .catch((error) => {
+        this.setState({ validForm: false, formError: `Screeps Room Terrain API failed: ${error}` });
         return;
-      }
-      response
-        .json()
-        .then(
-          (data: {
-            ok: boolean;
-            objects: Array<{ type: string; x: number; y: number; mineralType?: string }>;
-            error?: string;
-          }) => {
-            if (!data || !data.ok) {
-              this.setState({ validForm: false, formError: 'Bad data received from Screeps Room Objects API.' });
-              return;
-            }
-            if (data.error) {
-              this.setState({ validForm: false, formError: data.error });
-              return;
-            }
+      });
 
-            let sources: { x: number; y: number }[] = [];
-            let mineral: { [mineralType: string]: { x: number; y: number } } = {};
-            let structures: { [structure: string]: { x: number; y: number }[] } = {};
+    fetch(Utils.getRoomObjectsUrl(world, shard, room))
+      .then((response) => response.json())
+      .then(
+        (data: {
+          ok: boolean;
+          objects: Array<{ type: string; x: number; y: number; mineralType?: string }>;
+          error?: string;
+        }) => {
+          if (!data || !data.ok) {
+            this.setState({ validForm: false, formError: 'Bad data received from Screeps Room Objects API.' });
+            return;
+          }
+          if (data.error) {
+            this.setState({ validForm: false, formError: data.error });
+            return;
+          }
 
-            let keepStructures = ['controller'];
-            if (includeStructs) {
-              keepStructures.push(...Object.keys(Constants.CONTROLLER_STRUCTURES));
-            }
-            for (let o of data.objects) {
-              if (o.type === 'source') {
-                sources.push({
+          let sources: { x: number; y: number }[] = [];
+          let mineral: { [mineralType: string]: { x: number; y: number } } = {};
+          let structures: { [structure: string]: { x: number; y: number }[] } = {};
+
+          let keepStructures = ['controller'];
+          if (includeStructs) {
+            keepStructures.push(...Object.keys(Constants.CONTROLLER_STRUCTURES));
+          }
+          for (let o of data.objects) {
+            if (o.type === 'source') {
+              sources.push({
+                x: o.x,
+                y: o.y,
+              });
+            } else if (o.type === 'mineral') {
+              mineral[o.mineralType!] = {
+                x: o.x,
+                y: o.y,
+              };
+            } else {
+              if (keepStructures.indexOf(o.type) > -1) {
+                if (!structures[o.type]) {
+                  structures[o.type] = [];
+                }
+                structures[o.type].push({
                   x: o.x,
                   y: o.y,
                 });
-              } else if (o.type === 'mineral') {
-                mineral[o.mineralType!] = {
-                  x: o.x,
-                  y: o.y,
-                };
-              } else {
-                if (keepStructures.indexOf(o.type) > -1) {
-                  if (!structures[o.type]) {
-                    structures[o.type] = [];
-                  }
-                  structures[o.type].push({
-                    x: o.x,
-                    y: o.y,
-                  });
-                }
               }
             }
-            parent.setState({
-              structures: structures,
-              sources: sources,
-              mineral: mineral,
-            });
-            this.toggleModal();
           }
-        );
-    });
+          parent.setState({
+            structures: structures,
+            sources: sources,
+            mineral: mineral,
+          });
+          this.toggleModal();
+        })
+        .catch((error) => {
+          this.setState({ validForm: false, formError: `Screeps Room Objects API failed: ${error}` });
+          return;
+        });
   }
 
   getSelectedWorld() {
@@ -310,6 +307,11 @@ export class ModalImportRoomForm extends React.Component<ModalImportRoomFormProp
         <Modal show={this.state.modal} onHide={() => this.toggleModal()} className="import-room">
           <Modal.Header closeButton>Import Room</Modal.Header>
           <Modal.Body>
+            {window.location.host.includes('github.io') && (
+              <Alert variant="warning" className="py-1 px-2 mb-2">
+                The Import Room feature does not work on the github hosted version. Run the app locally to use the this feature.
+              </Alert>
+            )}
             <form id="load-room" className="load-room" onSubmit={this.handleSubmit}>
               <Row>
                 <Col xs={6}>
