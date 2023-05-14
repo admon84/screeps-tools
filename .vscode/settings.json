@@ -1,27 +1,24 @@
 {
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
-    },
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.detectIndentation": false,
-    "files.encoding": "utf8",
-    "files.insertFinalNewline": true,
-    "files.trimTrailingWhitespace": true,
-    "search.exclude": {
-      "dist/**": true,
-      "node_modules/**": true
-    },
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "workbench.colorCustomizations": {
-      "editorInlayHint.foreground": "#8a888f",
-      "editorInlayHint.background": "#00000000"
-    },
-    "eslint.enable": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnPaste": false,
-    "editor.formatOnType": false,
-    "editor.formatOnSave": true,
-    "editor.formatOnSaveMode": "file",
-    "vs-code-prettier-eslint.prettierLast": "false"
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "files.encoding": "utf8",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "search.exclude": {
+    "node_modules/**": true
+  },
+  "workbench.colorCustomizations": {
+    "editorInlayHint.foreground": "#8a888f",
+    "editorInlayHint.background": "#00000000"
+  },
+  "eslint.enable": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file"
 }
