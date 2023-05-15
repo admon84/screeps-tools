@@ -33,10 +33,9 @@ _This is similar to [o4kapuk's creep calculator](https://codepen.io/o4kapuk/full
 
 Features:
 * Generates a stats table based on creep body parts you add
+* Estimates creep abilities and effectiveness over time
 * Lists out the available creep actions
 * Includes support for boosted parts
-* Estimates creep impact to help you cr
-* Easy to check creep movement to prevent fatigue scenarios
 
 ![creep designer](https://user-images.githubusercontent.com/10291543/95763598-78f11980-0c6c-11eb-9303-362c962876e4.png)
 
@@ -55,6 +54,7 @@ Screeps Tools is easy to install and run on your local machine.
 * Start the app with `npm start`
 
 ## History
+
 I initiated this project in July 2019 as a fork from [Aracath/screeps-tools](https://github.com/Arcath/screeps-tools), aiming to enhance the UI and incorporate additional features. Subsequently, in 2021, I transitioned from the [screeps-tools-fork](https://github.com/admon84/screeps-tools-fork) repository and established this repository with a Python backend for API calls. For several years, I hosted this rendition of Screeps Tools on screeps.admon.dev. However, in 2023, I ceased hosting Screeps Tools on screeps.admon.dev and executed a final update to this project, replacing the Python backend with simple fetch API calls in the React client.
 
 ## Credits
