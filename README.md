@@ -23,7 +23,7 @@ Controls:
 - Hold left-click and drag to place multiple structures while dragging
 - Hold right-click and drag to erase while dragging
 
-![building planner](https://user-images.githubusercontent.com/10291543/95763564-6a0a6700-0c6c-11eb-9eb8-7325b98a4437.png)
+![building planner](https://github.com/admon84/screeps-tools/assets/10291543/865b2e04-8507-4d3a-aeb1-d241fd35a624)
 
 ### Creep Designer
 
@@ -37,7 +37,7 @@ Features:
 * Lists out the available creep actions
 * Includes support for boosted parts
 
-![creep designer](https://user-images.githubusercontent.com/10291543/95763598-78f11980-0c6c-11eb-9303-362c962876e4.png)
+![creep designer](https://github.com/admon84/screeps-tools/assets/10291543/8c4ed16e-d1da-4828-9149-021a11c14435)
 
 ## Getting started
 
