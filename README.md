@@ -55,7 +55,7 @@ Screeps Tools is easy to install and run on your local machine.
 
 ## History
 
-I initiated this project in July 2019 as a fork from [Aracath/screeps-tools](https://github.com/Arcath/screeps-tools), aiming to enhance the UI and incorporate additional features. Subsequently, in 2021, I transitioned from the [screeps-tools-fork](https://github.com/admon84/screeps-tools-fork) repository and established this repository with a Python backend for API calls. For several years, I hosted this rendition of Screeps Tools on screeps.admon.dev. However, in 2023, I ceased hosting Screeps Tools on screeps.admon.dev and executed a final update to this project, replacing the Python backend with simple fetch API calls in the React client.
+I initiated this project in July 2019 as a fork from [Aracath/screeps-tools](https://github.com/Arcath/screeps-tools), aiming to enhance the UI and incorporate additional features. In 2021, I transitioned from the [screeps-tools-fork](https://github.com/admon84/screeps-tools-fork) repository and established this new repository with a Python backend proxy for API calls. For several years, I hosted this rendition of Screeps Tools on screeps.admon.dev. However, in 2023, I ceased hosting Screeps Tools on screeps.admon.dev and executed a final update to this project, replacing the Python backend with simple fetch API calls in the React client.
 
 ## Credits
 
