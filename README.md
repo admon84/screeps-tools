@@ -29,7 +29,7 @@ Controls:
 
 Configure Creeps body parts and evaluate stats with the Creep Designer tool.
 
-_This is similar to the [o4kapuk's creep calculator](https://codepen.io/o4kapuk/full/ZKeorE)_
+_This is similar to [o4kapuk's creep calculator](https://codepen.io/o4kapuk/full/ZKeorE)_
 
 Features:
 * Generates a stats table based on creep body parts you add
@@ -55,5 +55,8 @@ Screeps Tools is easy to install and run on your local machine.
 * Start the app with `npm start`
 
 ## History
+I initiated this project in July 2019 as a fork from [Aracath/screeps-tools](https://github.com/Arcath/screeps-tools), aiming to enhance the UI and incorporate additional features. Subsequently, in 2021, I transitioned from the [screeps-tools-fork](https://github.com/admon84/screeps-tools-fork) repository and established this repository with a Python backend for API calls. For several years, I hosted this rendition of Screeps Tools on screeps.admon.dev. However, in 2023, I ceased hosting Screeps Tools on screeps.admon.dev and executed a final update to this project, replacing the Python backend with simple fetch API calls in the React client.
 
-I started this project as a fork from [Aracath/screeps-tools](https://github.com/Arcath/screeps-tools) back in 2018 so I could change the UI and add a few extra features for my own use. In 2021, I moved from the original repo (at [admon84/screeps-tools-fork](https://github.com/admon84/screeps-tools-fork)) and created this repo with a python backend that I used for hosting on screeps.admon.dev.  In 2023, I made a final update to this project and removed the python backend in favor of using simple fetch API calls in the react client.  Now it's easier to run on your local machine.
+## Credits
+
+- [Aracath/screeps-tools](https://github.com/Arcath/screeps-tools)
